@@ -3,7 +3,7 @@
 
 #include "Arduino.h"
 
-class rovercmd
+class RoverControl
 {
 public:
 	RoverControl(int lepin, int lppin, int repin, int rppin);
