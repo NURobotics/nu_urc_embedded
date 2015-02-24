@@ -85,14 +85,14 @@ bool PWM::setFaultMode(FaultMode fm)
 void PWM::enableTimer(int timer)
 {
   if(timer == 2 || timer == 3) {
-    *(TxCON[timer]) |= (1<<31);
+    *(TxCON[timer-1]) |= (1<<15);
   }
 }
 
 void PWM::disableTimer(int timer)
 {
   if(timer == 2 || timer == 3) {
-    *(TxCON[timer]) &= ~(1<<31);
+    *(TxCON[timer-1]) &= ~(1<<15);
   }
 }
 
@@ -101,16 +101,20 @@ float PWM::setTimerFrequency(int timer, float freq, TimerMode timer_mode)
   if(timer == 2 || timer == 3) {
     // Need to check if feasible
     unsigned int bit_shift = 16;
-    if(freq > MAX_TIMER_FREQ || freq < MIN_TIMER_FREQ) return false;
+    if(freq > MAX_TIMER_FREQ || freq < MIN_TIMER_FREQ) return 0.0;
     if(timer_mode == DOUBLE) bit_shift = 32;
     float est_prescalar = ((float)CLOCK_FREQ)/(freq*(1<<bit_shift));
-    unsigned int prescalar = (log(est_prescalar)/log(2))+1; // Prescalar bits
-    unsigned int counts = ((float)CLOCK_FREQ)/(freq*prescalar) - 1;
-    unsigned int t_buffer = *(TxCON[timer]);
+    if(est_prescalar <= 0.5) est_prescalar = 0.5;
+    int prescalar = ceil(log(est_prescalar)/log(2)+1); // Prescalar bits
+    if(prescalar < 0) prescalar = 0;
+    
+    unsigned int counts = ((float)CLOCK_FREQ)/(freq*(1<<prescalar)) - 1;
+    unsigned int t_buffer = *(TxCON[timer-1]);
     t_buffer &= ~(0b111<<4);
     t_buffer |= (prescalar<<4);
-    *(PRx[timer]) = counts;
-    return ((float)CLOCK_FREQ)/(prescalar*(counts+1));
+    *(TxCON[timer-1]) = t_buffer;
+    *(PRx[timer-1]) = counts;
+    return ((float)CLOCK_FREQ)/((1<<prescalar)*(counts+1));
   }
   else return 0.0;
 }

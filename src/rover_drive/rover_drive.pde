@@ -133,7 +133,7 @@ void loop()
 {
   js_publisher.publish(&(rds.js_));
   nh.spinOnce();
-  delayMicroseconds(1000000);
+  delay(100);
 }
 
 void velocityJointCommandsCallback(const nu_urc_msgs::JointCommands& j_cmds)
