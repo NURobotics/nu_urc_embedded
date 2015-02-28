@@ -28,7 +28,7 @@ void setup()
   TIMSK0 |= _BV(OCIE0A);
   n.initNode();
   n.advertise(pub);
-  n.getHardware()->setBaud115200);
+  n.getHardware()->setBaud(115200);
 }
 
 SIGNAL(TIMER0_COMPA_vect) {
