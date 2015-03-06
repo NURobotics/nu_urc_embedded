@@ -19,7 +19,6 @@ private:
 	int rightepin;
 	int rightppin;
 	int cnstrn(int val);
-	float arctan(float v);
 	float t;
 };
 

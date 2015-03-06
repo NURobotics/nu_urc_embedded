@@ -1,4 +1,5 @@
 #include "RoverControl.h"
+#include "math.h"
 
 RoverControl::RoverControl(int lepin, int lppin, int repin, int rppin)
 {
@@ -31,7 +32,7 @@ void RoverControl::setdirection(float dirx, float diry)
 		turn = 0;
 	}
 	else {
-		turn = (3.1416/2 - abs(arctan(diry/dirx)))/3.1416*2;
+		turn = (3.1416/2 - abs(atan(diry/dirx)))/3.1416*2;
 		turn = dirx/abs(dirx)*turn;
 	}
 	if (turn < .5 && turn >= 0){
@@ -113,8 +114,4 @@ void RoverControl::stop()
 {
 	analogWrite(leftepin, 0);
 	analogWrite(rightepin, 0);
-}
-float RoverControl::arctan(float v)
-{
-	t = v - 1.00/3.00*(pow(v, (3.00))) + 1/5.00*pow(v, 5.00);
 }
